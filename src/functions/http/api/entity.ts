@@ -1,11 +1,14 @@
 import { PagesHttpRequest, PagesHttpResponse } from "@yext/pages/*";
 import {
+  Category,
   CreateCategoryPageRequest,
   LocationProfile,
   WebhookPayload,
+  Location,
 } from "../../../types/yext";
 import {
-  createCategoryPageEntity,
+  createEntity,
+  deleteEntity,
   fetchEntities,
   fetchEntity,
 } from "../../../utils/api";
@@ -14,6 +17,8 @@ export default async function entity(
   request: PagesHttpRequest
 ): Promise<PagesHttpResponse> {
   const { method, body } = request;
+
+  console.log("Request received at:", new Date().toISOString());
 
   if (request.method !== "POST") {
     console.error("Method not allowed: ", method);
@@ -54,55 +59,93 @@ export default async function entity(
 
   const createCategoryPageRequests: CreateCategoryPageRequest[] = [];
 
-  checkIfEntityExistsResults.forEach((result) => {
-    if (result.status === "fulfilled") {
-      const value = result.value as {
-        entityExists: boolean;
-        entityId: string;
-      };
+  await Promise.allSettled(
+    checkIfEntityExistsResults.map(async (result) => {
+      if (result.status === "fulfilled") {
+        const value = result.value as {
+          entityExists: boolean;
+          entityId: string;
+        };
 
-      if (!value.entityExists) {
-        const requestBody = constructCategoryPageEntity(
-          locationEntityId,
-          value.entityId,
-          locationProfile
-        );
-        createCategoryPageRequests.push(requestBody);
+        if (!value.entityExists) {
+          console.log(
+            "Entity doesn't exist:",
+            value.entityId,
+            value.entityExists
+          );
+
+          const requestBody = await constructCategoryPageEntity(
+            locationEntityId,
+            value.entityId,
+            locationProfile
+          );
+          console.log("Request body:", requestBody);
+          createCategoryPageRequests.push(requestBody);
+        }
+      } else {
+        // Log or handle the error.
+        console.log("Error accessing entity:", result.reason);
       }
-    } else {
-      // Log or handle the error.
-      console.log("Error accessing entity:", result.reason);
-    }
-  });
+    })
+  );
 
+  console.log("Create requests:", createCategoryPageRequests);
   const createEntityPromises = createCategoryPageRequests.map((request) =>
-    createCategoryPageEntity<CreateCategoryPageRequest>(
-      "ce_categoryPage",
-      request
-    )
+    createEntity<CreateCategoryPageRequest>("ce_categoryPage", request)
   );
 
   const createCategoryPageRequestsResults =
     await Promise.allSettled(createEntityPromises);
 
+  const createdEntities: string[] = [];
   createCategoryPageRequestsResults.forEach((result) => {
+    console.log("Result:", result);
     if (result.status === "fulfilled") {
-      const value = result.value as PagesHttpResponse;
-      console.log("Entity created:", value);
+      const value = result.value;
+      if (value) {
+        console.log("Entity created:", value);
+        createdEntities.push(value);
+      }
     } else {
       console.log("Error creating entity:", result.reason);
     }
   });
 
   // Remove Category Pages that are no longer linked to the location
-  const test = await getEntitiesThatShouldBeDeleted(
+  const entityIdsToDelete = await getEntitiesThatShouldBeDeleted(
     locationEntityId,
-    locationProfile
+    categoryPageEntityIds
   );
-  console.log(test);
+  console.log("Entities to delete:", entityIdsToDelete);
 
-  // TODO: replace with actual logic
-  return { body: "POST request received", headers: {}, statusCode: 200 };
+  const deleteEntityPromises = entityIdsToDelete.map((entityId) =>
+    deleteEntity(entityId)
+  );
+
+  const deleteEntityResults = await Promise.allSettled(deleteEntityPromises);
+
+  const deletedEntities: string[] = [];
+  deleteEntityResults.forEach((result) => {
+    if (result.status === "fulfilled") {
+      const value = result.value;
+      if (value) {
+        console.log("Entity deleted:", value);
+        deletedEntities.push(value);
+      }
+    } else {
+      console.log("Error deleting entity:", result.reason);
+    }
+  });
+
+  return {
+    body: JSON.stringify({
+      message: "Request processed successfully",
+      createdEntities,
+      deletedEntities,
+    }),
+    headers: {},
+    statusCode: 200,
+  };
 }
 
 const checkIfEntityExists = async (
@@ -110,7 +153,7 @@ const checkIfEntityExists = async (
 ): Promise<{ entityExists: boolean; entityId: string }> => {
   const response = await fetchEntity(entityId);
 
-  const entityExists = response.status !== 404;
+  const entityExists = !!response;
   console.log(
     entityExists ? "Entity exists: " : "Entity doesn't exist: ",
     entityId
@@ -124,54 +167,44 @@ const checkIfEntityExists = async (
 
 const getEntitiesThatShouldBeDeleted = async (
   locationEntityId: string,
-  locationProfile: LocationProfile
+  categoryPageIds: string[]
 ): Promise<string[]> => {
   const filter = constructEqualsFilter("c_relatedLocations", locationEntityId);
-  console.log("Filter:", filter);
-  const apiResp = await fetchEntities(
+  const { response } = await fetchEntities<Location>(
     "ce_categoryPage",
     JSON.stringify(filter)
   );
-  const resp = await apiResp.json();
-  const categoryPageEntitiesForLocation = resp.response.entities;
-  return categoryPageEntitiesForLocation.map((entity) => entity.meta.id);
+  const categoryPageEntitiesForLocation = response.entities;
+  const currentCategoryPageIds = categoryPageEntitiesForLocation.map(
+    (entity) => entity.meta.id
+  );
 
-  // // Assuming `categoryPageEntitiesForLocation` is an array of entities with an `id` field.
-  // // Filter out entities whose ids are not present in `locationProfile.c_relatedCategories`.
-  // const entitiesToBeDeleted = categoryPageEntitiesForLocation
-  //   .filter((entity) => {
-  //     // Assuming each entity has a category id as the last segment of its id, following a '-'
-  //     const categoryId = entity.id.split("-").pop();
-  //     // Check if this category id is not in the locationProfile's related categories
-  //     return !locationProfile.c_relatedCategories.includes(categoryId);
-  //   })
-  //   .map((entity) => entity.id); // Extract the ids of the entities to be deleted
-
-  // return entitiesToBeDeleted;
+  return currentCategoryPageIds.filter((id) => !categoryPageIds.includes(id));
 };
 
-const constructCategoryPageEntity = (
+const constructCategoryPageEntity = async (
   locationEntityId: string,
   categoryPageEntityId: string,
   locationData: any
-): CreateCategoryPageRequest => {
+): Promise<CreateCategoryPageRequest> => {
   const id = categoryPageEntityId;
   const categoryId = categoryPageEntityId.split("-")[1];
-
-  // TODO: logic to get the name
-  // const name = locationData.name + " " + categoryEntityId;
-
   const slug = locationData.slug + "/" + categoryId;
+
+  const entityResponse = await fetchEntity<Category>(locationEntityId);
 
   return {
     meta: {
       id,
     },
-    name: "Category Page", // TODO: update with actual name
+    name: entityResponse?.response.name ?? "Category Page",
     slug,
     c_relatedCategories: [categoryId],
     c_relatedLocations: [locationEntityId],
-    // TODO: photo
+    primaryPhoto: entityResponse?.response.primaryPhoto,
+    photoGallery: entityResponse?.response.photoGallery ?? [],
+    products: entityResponse?.response.products ?? [],
+    services: entityResponse?.response.services ?? [],
   };
 };
 
@@ -191,6 +224,7 @@ const buildNoActionResponse = (reason: string): PagesHttpResponse => {
 
   return response;
 };
+
 type EqualsFilter = {
   [key: string]: {
     $eq: string;

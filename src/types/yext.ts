@@ -1,9 +1,17 @@
-import { ImageType } from "@yext/pages-components";
+import { ImageType, ComplexImageType } from "@yext/pages-components";
+
+export interface YextResponse<T> {
+  meta: {
+    uuid: string;
+    errors: any[];
+  };
+  response: T;
+}
 
 export interface WebhookPayload {
   // TODO: update this type
   languageProfiles: any[];
-  meta: Meta;
+  meta: WebhookMeta;
   primaryProfile: Record<string, any>;
   changedFields: ChangedFields;
   entityId: string;
@@ -14,13 +22,25 @@ interface ChangedFields {
   language: string;
 }
 
-interface Meta {
+interface WebhookMeta {
   actor: string;
   accountId: string;
   appSpecificAccountId: string;
   eventType: string;
   uuid: string;
   timestamp: number;
+}
+
+interface EntityMeta {
+  accountId: string;
+  uid: string;
+  id: string;
+  timestamp: string;
+  createdTimestamp: string;
+  folderId: string;
+  language: string;
+  countryCode: string;
+  entityType: string;
 }
 
 export interface CreateCategoryPageRequest {
@@ -32,6 +52,19 @@ export interface CreateCategoryPageRequest {
   c_relatedCategories: string[];
   c_relatedLocations: string[];
   primaryPhoto?: ImageType;
+  photoGallery?: ComplexImageType[];
+  products?: string[];
+  services?: string[];
+}
+
+export interface CreateEntityRequestResponse {
+  meta: {
+    id: string;
+  };
+}
+
+export interface Location extends LocationProfile {
+  meta: EntityMeta;
 }
 
 export interface LocationProfile {
@@ -103,4 +136,16 @@ export interface LocationProfile {
   isoRegionCode: string;
   c_relatedCategories?: string[];
   slug: string;
+}
+
+export interface Category {
+  meta: EntityMeta;
+  primaryPhoto: ImageType;
+  slug: string;
+  description: string;
+  name: string;
+  photoGallery?: ComplexImageType[];
+  c_feateredProducts?: string[];
+  products?: string[];
+  services?: string[];
 }

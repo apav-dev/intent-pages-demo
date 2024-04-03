@@ -1,10 +1,9 @@
-import { PagesHttpResponse } from "@yext/pages/*";
+import { YextResponse } from "../types/yext";
 
-export const createCategoryPageEntity = async <T>(
+export const createEntity = async <T>(
   entityType: string,
   requestBody: T
-): Promise<PagesHttpResponse> => {
-  console.log("Creating entity:", requestBody);
+): Promise<string | undefined> => {
   const mgmtApiResp = await fetch(
     `https://api.yextapis.com/v2/accounts/me/entities?api_key=${YEXT_MGMT_API_KEY}&v=20230901&entityType=${entityType}`,
     {
@@ -18,26 +17,19 @@ export const createCategoryPageEntity = async <T>(
 
   const resp = await mgmtApiResp.json();
 
-  if (mgmtApiResp.status !== 200) {
-    console.error("Error creating entity:", resp);
-    return {
-      body: JSON.stringify(resp),
-      headers: {},
-      statusCode: mgmtApiResp.status,
-    };
+  if (mgmtApiResp.status !== 201) {
+    console.error("Error creating entity:", JSON.stringify(resp));
+    return;
   } else {
+    const resp = await mgmtApiResp.json();
     console.log("Entity created:", resp);
-    return {
-      body: JSON.stringify(resp),
-      headers: {},
-      statusCode: 200,
-    };
+    return resp.response.meta.id;
   }
 };
 
 export const deleteEntity = async (
   entityId: string
-): Promise<PagesHttpResponse> => {
+): Promise<string | undefined> => {
   const mgmtApiResp = await fetch(
     `https://api.yextapis.com/v2/accounts/me/entities/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`,
     {
@@ -52,34 +44,38 @@ export const deleteEntity = async (
 
   if (mgmtApiResp.status !== 200) {
     console.error("Error deleting entity:", resp);
-    return {
-      body: JSON.stringify(resp),
-      headers: {},
-      statusCode: mgmtApiResp.status,
-    };
+    return;
   } else {
-    console.log("Entity deleted:", resp);
-    return {
-      body: JSON.stringify(resp),
-      headers: {},
-      statusCode: 200,
-    };
+    return entityId;
   }
 };
 
-export const fetchEntity = (entityId: string): Promise<Response> => {
+export const fetchEntity = async <T>(
+  entityId: string
+): Promise<YextResponse<T> | undefined> => {
   const url = `https://api.yextapis.com/v2/accounts/me/entities/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`;
-  return fetch(url);
+  const apiResponse = await fetch(url);
+
+  if (apiResponse.status === 404) {
+    return;
+  } else if (apiResponse.status === 200) {
+    const response = await apiResponse.json();
+    return response;
+  } else {
+    console.error("Error fetching entity:", apiResponse);
+    return;
+  }
 };
 
-export const fetchEntities = (
+export const fetchEntities = async <T>(
   entityType: string,
   filter: string
-): Promise<Response> => {
+): Promise<YextResponse<{ entities: T[] }>> => {
   let url = `https://api.yextapis.com/v2/accounts/me/entities?api_key=${YEXT_MGMT_API_KEY}&v=20230901&entityType=${entityType}`;
   if (filter) {
     url += `&filter=${filter}`;
   }
-  console.log("Fetching entities:", url);
-  return fetch(url);
+  const apiResponse = await fetch(url);
+  const response = await apiResponse.json();
+  return response;
 };
