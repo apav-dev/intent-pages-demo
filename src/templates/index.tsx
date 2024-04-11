@@ -77,6 +77,7 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
 
 
 const Index: Template<TemplateRenderProps> = (data) => {
+  console.log(data);
 
   return (
     <>

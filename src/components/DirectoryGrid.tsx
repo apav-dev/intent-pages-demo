@@ -108,9 +108,9 @@ const DirectoryGrid = () => {
       <div className="centered-container section space-y-14">
         {directoryChildren && (
           <div className="grid gap-10 px-20">
-            <ScrollEffect effect="reveal" cascade={true} duration={700} damping={0.2} triggerOnce={true}>
+            {/* <ScrollEffect effect="reveal" cascade={true} duration={700} damping={0.2} triggerOnce={true}> */}
               {childrenDivs}
-            </ScrollEffect>
+            {/* </ScrollEffect> */}
           </div>
         )}
       </div>
