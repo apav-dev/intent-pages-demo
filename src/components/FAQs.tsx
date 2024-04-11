@@ -3,6 +3,16 @@ import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline'
 
 const faqs = [
   {
+    question: "What is Yext Electronics?",
+    answer:
+      "Yext Electronics is a premier technology store offering the most cutting-edge electronics and gadgets on the market.",
+  },
+  {
+    question: "Who founded Yext Electronics?",
+    answer:
+      "Yext Electronics was founded by a group of passionate product managers based in New York City. Their dedication to technology and electronics drove them to create a store that showcases the latest and most innovative products.",
+  },
+  {
     question: "What is Yext?",
     answer:
       "Yext is the leading digital presence platform for multi-location brands to deliver consistent, accurate, and engaging experiences.",
@@ -17,7 +27,7 @@ const faqs = [
 
 export default function Example() {
   return (
-    <div className="bg-white">
+    <div className="border shadow-md">
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="mx-auto max-w-4xl divide-y divide-gray-900/10">
           <h2 className="">Frequently asked questions</h2>

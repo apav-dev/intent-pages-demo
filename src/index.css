@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .centered-container {
-  @apply mx-auto px-5 md:px-14 max-w-screen-2xl;
+  @apply mx-auto px-5 md:px-14 xl:max-w-screen-xl 2xl:max-w-screen-2xl;
 }
 
 .section {
@@ -32,4 +32,14 @@ h3 {
 
 .HoursStatus {
   @apply font-bold;
+}
+
+.mapPin {
+  @apply w-12 h-12 drop-shadow-md;
+  transition: all .2s ease-in-out;
+}
+
+.mapPin:hover {
+  transform: scale(1.2);
+  cursor: pointer;
 }

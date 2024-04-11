@@ -113,7 +113,7 @@ const Carousel = ({}: CarouselProps) => {
     arrows: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 3,
     slidesToScroll: 1,
     initialSlide: 0,
     lazyLoad: "ondemand",
@@ -162,7 +162,7 @@ const Carousel = ({}: CarouselProps) => {
 
   return (
     <>
-      <div className="mx-auto pt-10 lg:px-20">
+      <div className="mx-auto pt-20 pb-20 section">
         <SliderComponent
           {...settings}
           className="drop-shadow sm:px-3 sm:mx-3 md:px-5"
@@ -175,60 +175,3 @@ const Carousel = ({}: CarouselProps) => {
 };
 
 export default Carousel;
-
-type DynamicOptions = {
-  componentName?: string;
-  loading?: () => React.JSX.Element;
-};
-
-/**
- * const SliderComponent = dynamic(() => import("react-slick"), {
- *   loading: () => <h1>hi</h1>,
- * });
- *
- * @param importComponent
- * @param options
- * @returns
- */
-function dynamic(
-  importComponent: () => Promise<any>,
-  options?: DynamicOptions
-) {
-  const resolvedOptions = {
-    componentName: "default",
-    loading: () => <></>,
-    ...options,
-  };
-
-  class AsyncComponent extends React.Component<any, any> {
-    constructor(props: React.JSX.Element) {
-      super(props);
-
-      this.state = {
-        component: null,
-      };
-    }
-
-    async componentDidMount() {
-      const component = await importComponent();
-
-      if (!component[resolvedOptions.componentName]) {
-        console.error(
-          `Exported function "${resolvedOptions.componentName}" does not exist for dynamic import: ${importComponent}`
-        );
-      }
-
-      this.setState({
-        component: component[resolvedOptions.componentName],
-      });
-    }
-
-    render() {
-      const C = this.state.component;
-
-      return C ? <C {...this.props} /> : resolvedOptions.loading();
-    }
-  }
-
-  return AsyncComponent;
-}

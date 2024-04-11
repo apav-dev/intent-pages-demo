@@ -129,7 +129,7 @@ const DayRow = (props: DayRow) => {
   const { dayName, day, date, isToday } = props;
 
   return (
-    <tr className={isToday ? "bg-blue-50 font-bold tracking-tight h-6 text-sm sm:text-base" : "tracking-tight h-6 justify-between text-sm sm:text-base"}>
+    <tr className={isToday ? "font-bold tracking-tight h-6" : "tracking-tight h-6 justify-between"}>
       <td className="capitalize  tracking-tight ">
         <span>{dayName}</span>
       </td>
@@ -166,7 +166,7 @@ const Hours = ({title}:HoursProps) => {
 
   return (
     <>
-      <div className="px-4 space-y-8 flex flex-col lg:w-1/2">
+      <div className="px-4 space-y-8 flex flex-col">
         {title && 
           <div className="flex items-center space-x-2">
             <CalendarClock />
@@ -181,7 +181,7 @@ const Hours = ({title}:HoursProps) => {
           separatorTemplate={() => <span className="p-2"> - </span>}
           dayOfWeekTemplate={() => null}
         />
-        <table className="text-gray-700 ">
+        <table className="text-gray-700">
           <thead className="sr-only">
             <tr>
               <th>Day of the Week</th>

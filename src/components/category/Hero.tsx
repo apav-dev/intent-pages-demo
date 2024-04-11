@@ -1,6 +1,6 @@
-import { useDocument } from "../hooks/useDocument";
-import { Camera } from "lucide-react";
-import StarRating from "./StarRating";
+import { useDocument } from "../../hooks/useDocument";
+import { Megaphone } from "lucide-react";
+import StarRating from "../StarRating";
 import { Image } from "@yext/pages-components"
 
 export interface HeroProps {
@@ -15,11 +15,10 @@ export interface HeroProps {
     const primaryPhoto = document.c_relatedCategories[0].primaryPhoto;
     const category = document.c_relatedCategories[0].name;
     const featuredProducts = document.c_relatedCategories[0].c_featuredProducts;
-    console.log(featuredProducts);
   
     return (
       <>
-        <div className="px-4 space-y-10">
+        <div className="px-4 space-y-10 section">
             <div className="flex flex-col space-y-12 md:justify-between md:space-x-12 md:flex-row">
                 <div className="space-y-4 md:w-1/2">
                     <h1 className="font-bold  text-gray-900">{name}</h1>
@@ -27,11 +26,9 @@ export interface HeroProps {
                     <StarRating rating={4.7} totalReviews={100} />
                     <div className="text-lg tracking-wide">{transformedDescription}</div>
                     <div className="flex flex-col space-y-3 lg:flex-row lg:space-x-8 lg:space-y-0">
-                        <div id="cta1" className="pt-5">
-                            <a className="border-2 border-black shadow-sm px-4 py-2 rounded-md cursor-pointer hover:bg-black hover:text-white" href="#">Browse Products</a>
-                        </div>
-                        <div id="cta2" className="pt-5">
-                            <a className="border-2 border-black shadow-sm px-4 py-2 rounded-md cursor-pointer hover:bg-black hover:text-white" href="#">Speak With An Expert</a>
+                        <div id="CTAs" className="flex flex-col text-center space-y-3 py-4 w-full sm:max-w-fit">
+                            <a className="rounded-full w-full sm:w-auto bg-black px-8 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" href="#">Browse Products</a>
+                            <a className="rounded-full w-full sm:w-auto bg-black px-8 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" href="#">Speak With An Expert</a>
                         </div>
                     </div>
                 </div>
@@ -41,14 +38,14 @@ export interface HeroProps {
             </div>
             <div className="space-y-8 pb-20">
                 <h2 className="flex space-x-3 items-center tracking-normal">
-                    <Camera size={30} />
+                    <Megaphone size={30} />
                     <span>Featured {category}</span>
                 </h2>
                 <div className="grid gap-8 md:grid-cols-3">
                     {featuredProducts.map((product: any, index: number) => (
                     <div key={index} className="border border-gray-200 rounded-md p-10 shadow-md">
                         <h3 className="font-bold text-lg">{product.name}</h3>
-                        <Image image={product.primaryPhoto.image}  />
+                        <Image image={product.primaryPhoto.image} className="p-6" />
                         <div className="space-y-1">
                             {product.brand && <p className="text-gray-700 font-bold">{product.brand}</p>}
                             {product.color && <p className="text-gray-700">{product.color}</p>}

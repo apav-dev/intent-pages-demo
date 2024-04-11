@@ -13,14 +13,10 @@ import {
   import "../index.css";
   import { DocumentProvider } from "../hooks/useDocument";
   
-  import Banner from "../components/Banner";
   import BreadCrumbs from "../components/BreadCrumbs";
-  import Carousel from "../components/Carousel";
-  // import Hero from "../components/Hero";
-  import FAQs from "../components/FAQs";
-  import Hours from "../components/Hours";
+  import Hero from "../components/category/Hero";
   import Main from "../components/Main";
-  import Hero from "../components/Hero";
+  import ProductsAndServices from "../components/category/ProductsAndServices";
   
   export const config: TemplateConfig = {
     stream: {
@@ -120,13 +116,8 @@ import {
               {/* <Banner /> */}
               <div className="centered-container">
                 <BreadCrumbs />
-                <div className="space-y-12 lg:flex">
-                  {/* <NAP /> */}
-                  <Hero />
-                  {/* <Hours title="Store Hours" /> */}
-                </div>
-                {/* <FAQs /> */}
-                {/* <Carousel /> */}
+                <Hero />
+                <ProductsAndServices />
               </div>
             </main>
           </DocumentProvider>
