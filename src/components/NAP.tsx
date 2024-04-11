@@ -1,7 +1,7 @@
 import { useDocument } from "../hooks/useDocument";
 import { Car, Map, Phone } from "lucide-react";
 import { formatPhoneNumber } from "react-phone-number-input";
-import StarRating from "../components/StarRating";
+import StarRating from "./StarRating";
 
 export interface NapProps {
     // title?: string;
@@ -49,12 +49,11 @@ export interface NapProps {
                         <div id="cta2" className="pt-5">
                             <a className="border-2 border-black shadow-sm px-4 py-2 rounded-md cursor-pointer hover:bg-black hover:text-white" href="#">Speak With An Expert</a>
                         </div>
-
                     </div>
                 </div>
             </div>
             {description && 
-                <div className="bg-gray-50 p-4">
+                <div className="bg-gray-50 p-4 rounded-sm shadow-sm">
                     {description}
                 </div>
             }

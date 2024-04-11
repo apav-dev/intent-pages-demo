@@ -4,6 +4,7 @@ import { useDocument } from "../hooks/useDocument";
 import { useTemplateData } from "../common/useTemplateData";
 import ScrollEffect from "./ScrollEffect";
 import { Map, Phone } from "lucide-react";
+import { HoursStatus } from "@yext/sites-react-components";
 
 const sortByCity = (a:any, b:any) => {
   const first = a.address.city;
@@ -30,7 +31,7 @@ const DirectoryGrid = () => {
       // >
       //   <div
       //     key={child.slug}
-      //     className="p-10 bg-gray-100 border rounded-lg  shadow-md columns-2 hover:drop-shadow-md"
+      //     className="p-10 bg-gray-100 border rounded-md  shadow-md columns-2 hover:drop-shadow-md"
       //   >
       //     <div className="space-y-6">
       //       <h2 className="font-semibold">
@@ -49,9 +50,18 @@ const DirectoryGrid = () => {
       //         <Phone size={24}/>
       //         <div>{formatPhoneNumber(child.mainPhone)}</div>
       //       </div>
+      //       <div>
+      //         <HoursStatus
+      //           hours={child.hours}
+      //           className="pt-4 text-xl"
+      //           // timezone={document.timezone}
+      //           separatorTemplate={() => <span className="p-2"> - </span>}
+      //           dayOfWeekTemplate={() => null}
+      //         />
+      //       </div>
       //     </div>
       //     <div>
-      //       <Image image={child.photoGallery[0]} className="rounded-lg " />
+      //       <Image image={child.photoGallery[0]} className="rounded-md " />
       //     </div>
       //   </div>
       // </Link>
@@ -81,6 +91,13 @@ const DirectoryGrid = () => {
               <Phone size={24} />
               <div>{formatPhoneNumber(child.mainPhone)}</div>
             </div>
+            <HoursStatus
+                hours={child.hours}
+                className="pt-4 text-xl"
+                // timezone={document.timezone}
+                separatorTemplate={() => <span className="p-2"> - </span>}
+                dayOfWeekTemplate={() => null}
+              />
           </div>
         </div>
       </Link>
@@ -91,7 +108,7 @@ const DirectoryGrid = () => {
       <div className="centered-container section space-y-14">
         {directoryChildren && (
           <div className="grid gap-10 px-20">
-            <ScrollEffect effect="reveal" cascade={true} duration={1000} damping={0.2} triggerOnce={true}>
+            <ScrollEffect effect="reveal" cascade={true} duration={700} damping={0.2} triggerOnce={true}>
               {childrenDivs}
             </ScrollEffect>
           </div>

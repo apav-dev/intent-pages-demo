@@ -53,11 +53,6 @@ export const getPath: GetPath<TemplateProps> = ({ document }) => {
 };
 
 
-export const getRedirects: GetRedirects<TemplateProps> = ({ document }) => {
-  return [`index-old/${document.id.toString()}`];
-};
-
-
 export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   relativePrefixToRoot,
   path,
@@ -71,7 +66,7 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
 };
 
 
-const EntityPage: Template<TemplateRenderProps> = (data) => {
+const LocationPage: Template<TemplateRenderProps> = (data) => {
 
   return (
     <>
@@ -95,4 +90,4 @@ const EntityPage: Template<TemplateRenderProps> = (data) => {
   );
 };
 
-export default EntityPage;
+export default LocationPage;

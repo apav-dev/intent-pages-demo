@@ -28,6 +28,7 @@ export const config: TemplateConfig = {
       "dm_directoryChildren.address",
       "dm_directoryChildren.neighborhood",
       "dm_directoryChildren.mainPhone",
+      "dm_directoryChildren.hours",
       "dm_directoryChildren.photoGallery",
     ],
     filter: {
