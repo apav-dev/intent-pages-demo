@@ -14,8 +14,12 @@ import { DocumentProvider } from "../hooks/useDocument";
 
 import Banner from "../components/Banner";
 import BreadCrumbs from "../components/BreadCrumbs";
+import Carousel from "../components/Carousel";
 // import Hero from "../components/Hero";
+import FAQs from "../components/FAQs";
+import Hours from "../components/Hours";
 import Main from "../components/Main";
+import NAP from "../components/NAP";
 
 export const config: TemplateConfig = {
   stream: {
@@ -73,11 +77,16 @@ const EntityPage: Template<TemplateRenderProps> = (data) => {
     <>
       <Main data={data}>
         <DocumentProvider value={data.document}>
-          <main>
+          <main className="min-h-screen">
             {/* <Banner /> */}
             <div className="centered-container">
               <BreadCrumbs />
-              {/* <Hero /> */}
+              <div className="space-y-12 lg:flex">
+                <NAP />
+                <Hours title="Store Hours" />
+              </div>
+              <FAQs />
+              <Carousel />
             </div>
           </main>
         </DocumentProvider>

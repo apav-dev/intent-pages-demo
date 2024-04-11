@@ -1,17 +1,17 @@
 import { Image } from "@yext/pages-components";
 import { useDocument } from "../hooks/useDocument";
-import { Home, ChevronLeft } from "lucide-react";
+import { Home, ChevronRight } from "lucide-react";
 
 const BreadCrumbs = () => {
     const document = useDocument<any>();
     const name = document.name;
     const address = document.address;
   return (
-    <div className="flex p-10 space-x-8 items-center">
-        <a href="/index.html">
-            <Home size={24} />
+    <div className="centered-container flex p-10 space-x-4 items-center text-sm">
+        <a href="/index.html" className="">
+            <Home size={18} className="hover:underline" />
         </a>
-        <ChevronLeft size={16} />
+        <ChevronRight size={16} />
         <div>{name} ({address.line1}, {address.city}, {address.region})</div>
     </div> 
   );

@@ -1,8 +1,6 @@
-export interface HoursProps {
-  title?: string;
-  hours: Week;
-  children?: React.ReactNode;
-}
+import { useDocument } from "../hooks/useDocument";
+import { HoursStatus } from "@yext/sites-react-components";
+import { CalendarClock } from "lucide-react";
 
 interface Week extends Record<string, any> {
   monday?: Day;
@@ -27,6 +25,7 @@ type OpenIntervals = {
 type DayRow = {
   dayName: string;
   day: Day;
+  date: string;
   isToday?: boolean;
 };
 
@@ -87,7 +86,7 @@ function sortByDay(week: Week): Week {
 const renderHours = (week: Week) => {
   const dayDom: JSX.Element[] = [];
   for (const [k, v] of Object.entries(sortByDay(week))) {
-    dayDom.push(<DayRow key={k} dayName={k} day={v} isToday={isDayToday(k)} />);
+    dayDom.push(<DayRow key={k} dayName={k} date={getDateForDay(k)} day={v} isToday={isDayToday(k)} />);
   }
 
   return <tbody className="font-normal">{dayDom}</tbody>;
@@ -109,16 +108,36 @@ function convertTo12HourFormat(time: string, includeMeridiem: boolean): string {
   );
 }
 
+function getDateForDay(dayName: string): string {
+  const today = new Date();
+  const currentDayIndex = defaultSorter[dayName];
+  let difference = currentDayIndex - today.getDay();
+  if (difference < 0) {
+    difference += 7; // Move to the next week if the day is earlier than today
+  }
+  const targetDate = new Date(today);
+  targetDate.setDate(today.getDate() + difference);
+
+  const month = targetDate.toLocaleString('default', { month: 'short' });
+  const day = targetDate.getDate();
+
+  return `${month} ${day}`;
+}
+
+
 const DayRow = (props: DayRow) => {
-  const { dayName, day, isToday } = props;
+  const { dayName, day, date, isToday } = props;
 
   return (
-    <tr className={isToday ? "bg-blue-50 font-bold tracking-tight h-10" : "tracking-tight h-10"}>
-      <td className="capitalize pr-8 text-lg tracking-tight ">
+    <tr className={isToday ? "bg-blue-50 font-bold tracking-tight h-6 text-sm sm:text-base" : "tracking-tight h-6 justify-between text-sm sm:text-base"}>
+      <td className="capitalize  tracking-tight ">
         <span>{dayName}</span>
       </td>
+      <td className="tracking-tight">
+        <span>{date}</span>
+      </td>
       {!day.isClosed && (
-        <td className="text-lg pr-8 tracking-tight md:pr-0">
+        <td className=" tracking-tight">
           <span>
             {convertTo12HourFormat(day.openIntervals[0].start, true)} -{" "}
             {convertTo12HourFormat(day.openIntervals[0].end, true)}
@@ -126,7 +145,7 @@ const DayRow = (props: DayRow) => {
         </td>
       )}
       {day.isClosed && (
-        <td className="text-lg tracking-tight ">
+        <td className="tracking-tight">
           <span>Closed</span>
         </td>
       )}
@@ -134,19 +153,39 @@ const DayRow = (props: DayRow) => {
   );
 };
 
-const Hours = (props: HoursProps) => {
-  const { title, hours } = props;
+export interface HoursProps {
+  title?: string;
+  // hours: Week;
+  children?: React.ReactNode;
+}
+
+const Hours = ({title}:HoursProps) => {
+  const document = useDocument<any>();
+  const hours = document.hours;
+  console.log(document);
 
   return (
     <>
-      <div className="px-4 text-center flex flex-col justify-center items-center sm:p-6" style={{paddingTop: '4rem', paddingBottom: '4rem'}}>
-        <h2 className="text-3xl font-bold mb-4 tracking-tight text-gray-900">
-          <a id="hours">{title}</a>
-        </h2>
-        <table className="md:w-1/2 text-gray-700">
+      <div className="px-4 space-y-8 flex flex-col lg:w-1/2">
+        {title && 
+          <div className="flex items-center space-x-2">
+            <CalendarClock />
+            <h2 className="tracking align-top">
+              <a id="hours">{title}</a>
+            </h2>
+          </div>
+        }
+        <HoursStatus
+          hours={hours}
+          // timezone={document.timezone}
+          separatorTemplate={() => <span className="p-2"> - </span>}
+          dayOfWeekTemplate={() => null}
+        />
+        <table className="text-gray-700 ">
           <thead className="sr-only">
             <tr>
               <th>Day of the Week</th>
+              <th>Date</th>
               <th>Hours</th>
             </tr>
           </thead>
