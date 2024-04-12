@@ -17,7 +17,7 @@ export interface HeroProps {
   
     return (
       <>
-        <div className="px-4 space-y-10 section">
+        <div className="space-y-10 section">
             <div className="flex flex-col space-y-12 md:justify-between md:space-x-12 md:flex-row">
                 <div className="space-y-4 md:w-1/2">
                     <h1 className="font-bold  text-gray-900">{name}</h1>

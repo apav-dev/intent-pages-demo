@@ -116,7 +116,7 @@ const LocationPage: Template<TemplateRenderProps> = (data) => {
       <Main data={data}>
         <DocumentProvider value={data.document}>
           <main className="min-h-screen pb-32">
-            <div className="centered-container section">
+            <div className="centered-container">
               <BreadCrumbs />
               <Hero />
             </div>

@@ -16,7 +16,7 @@ import Hours from "../Hours";
   
     return (
         <>
-            <div className="space-y-10">
+            <div className="space-y-10 section">
                 <div>
                     <h1 className="font-bold mb-4 text-gray-900">{name} {neighborhood && <span>({neighborhood})</span>}</h1>
                     <StarRating rating={4.7} totalReviews={100} />
