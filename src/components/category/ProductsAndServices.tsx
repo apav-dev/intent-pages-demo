@@ -11,34 +11,38 @@ const ProductsAndServices = () => {
     return (
         <>
             <div className="section grid md:grid-cols-2 gap-8">
-                <div className="space-y-6 border p-6 bg-gray-50 rounded-md shadow-sm">
-                    <h2 className="flex space-x-3 items-center tracking-normal">
-                        <Camera size={30} />
-                        <span>Products </span>
-                    </h2>
-                    <ul className="pl-2">
-                        {products.map((product: string, index: number) => (
-                            <div className="flex space-x-3">
-                                <Check size={20} />
-                                <li key={index} className="text-xl tracking-wider">{product}</li>
-                            </div>
-                        ))}
-                    </ul>
-                </div>
-                <div className="space-y-6 border p-6 bg-gray-50 rounded-md shadow-sm">
-                    <h2 className="flex space-x-3 items-center tracking-normal">
-                        <CircleUserRound size={30} />
-                        <span>Services </span>
-                    </h2>
-                    <ul className="pl-2">
-                        {services.map((service: string, index: number) => (
-                            <div className="flex space-x-3">
-                                <Check size={20} />
-                                <li key={index} className="text-xl tracking-wider">{service}</li>
-                            </div>
-                        ))}
-                    </ul>
-                </div>
+                {products && 
+                    <div className="space-y-6 border p-6 bg-gray-50 rounded-md shadow-sm">
+                        <h2 className="flex space-x-3 items-center tracking-normal">
+                            <Camera size={30} />
+                            <span>Products </span>
+                        </h2>
+                        <ul className="pl-2">
+                            {products.map((product: string, index: number) => (
+                                <div className="flex space-x-3">
+                                    <Check size={20} />
+                                    <li key={index} className="text-xl tracking-wider">{product}</li>
+                                </div>
+                            ))}
+                        </ul>
+                    </div>
+                }
+                {services &&                 
+                    <div className="space-y-6 border p-6 bg-gray-50 rounded-md shadow-sm">
+                        <h2 className="flex space-x-3 items-center tracking-normal">
+                            <CircleUserRound size={30} />
+                            <span>Services </span>
+                        </h2>
+                        <ul className="pl-2">
+                            {services.map((service: string, index: number) => (
+                                <div className="flex space-x-3">
+                                    <Check size={20} />
+                                    <li key={index} className="text-xl tracking-wider">{service}</li>
+                                </div>
+                            ))}
+                        </ul>
+                    </div>
+                }
             </div>
         </>
     );

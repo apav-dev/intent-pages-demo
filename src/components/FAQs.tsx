@@ -25,7 +25,7 @@ const faqs = [
   // More questions...
 ]
 
-export default function Example() {
+export default function FAQs() {
   return (
     <div className="border shadow-md">
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">

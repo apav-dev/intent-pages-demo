@@ -25,7 +25,6 @@ const Main = (props: MainProps) => {
 };
 
 const MainInternal = (props: MainProps) => {
-
   const { children } = props;
 
   // Create the global window.enableYextAnalytics function for clients that need to get user consent

@@ -18,7 +18,6 @@ const BreadCrumbs = () => {
       address = document.c_relatedLocations[0].address;
       name = document.c_relatedCategories[0].name;
       locationSlug = relativePrefixToRoot.concat(document.c_relatedLocations[0].slug);
-      console.log(locationSlug);
     }
   return (
     <div className="centered-container flex p-10 space-x-4 items-center text-sm">

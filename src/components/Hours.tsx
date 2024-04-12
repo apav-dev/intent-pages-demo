@@ -162,7 +162,6 @@ export interface HoursProps {
 const Hours = ({title}:HoursProps) => {
   const document = useDocument<any>();
   const hours = document.hours;
-  console.log(document);
 
   return (
     <>
