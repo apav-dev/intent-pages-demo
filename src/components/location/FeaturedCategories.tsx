@@ -19,11 +19,13 @@ const FeaturedCategories = () => {
                                 <>
                                     <div className="space-y-10 py-10">
                                         <h3 className="text-2xl tracking-wide text-center sm:text-left md:text-3xl">{category.c_promotionTitle}</h3>
-                                        <a href={`/${slug}/${category.slug}`}>
-                                          <button className="rounded-full w-full sm:max-w-fit bg-black px-8 py-2.5 text-lg font-semibold text-white shadow-md hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                                            Shop {category.name}
-                                          </button>
-                                        </a>
+                                        <div>
+                                          <a href={`/${slug}/${category.slug}`}>
+                                            <button className="rounded-full w-full sm:max-w-fit bg-black px-8 py-2.5 text-lg font-semibold text-white shadow-md hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                              Shop {category.name}
+                                            </button>
+                                          </a>
+                                        </div>
                                         <div id="Products & Services" className="flex space-x-10">
                                           {category.products && 
                                             <div className="space-y-3">
@@ -66,11 +68,13 @@ const FeaturedCategories = () => {
                                     </div>
                                     <div className="space-y-10 py-2">
                                         <h3 className="text-2xl tracking-wide text-center sm:text-left md:text-3xl ">{category.c_promotionTitle}</h3>
-                                        <a href={`/${slug}/${category.slug}`}>
-                                          <button className="rounded-full w-full sm:max-w-fit bg-black px-8 py-2.5 text-lg font-semibold text-white hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                                            Shop {category.name}
-                                          </button>
-                                        </a>
+                                        <div>
+                                          <a href={`/${slug}/${category.slug}`}>
+                                            <button className="rounded-full w-full sm:max-w-fit bg-black px-8 py-2.5 text-lg font-semibold text-white hover:bg-gray-600 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                              Shop {category.name}
+                                            </button>
+                                          </a>
+                                        </div>
                                         <div id="Products & Services" className="flex space-x-10">
                                           {category.products &&                                          
                                             <div className="space-y-3">
