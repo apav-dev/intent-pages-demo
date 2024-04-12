@@ -1,10 +1,3 @@
-/**
- * This is an example of how to create a template that makes use of streams data.
- * The stream data originates from Yext's Knowledge Graph. When a template in
- * concert with a stream is built by the Yext Sites system, a static html page
- * is generated for every corresponding stream document stream document (based on the filter).
- */
-
 import {
   GetHeadConfig,
   GetPath,
@@ -14,50 +7,96 @@ import {
   TemplateConfig,
   TemplateProps,
   TemplateRenderProps,
+  TransformProps
 } from "@yext/pages";
 import * as React from "react";
 import "../index.css";
+import { DocumentProvider } from "../hooks/useDocument";
+import Banner from "../components/Banner";
+import BreadCrumbs from "../components/BreadCrumbs";
+import Carousel from "../components/Carousel";
+// import Hero from "../components/Hero";
+import FAQs from "../components/FAQs";
+import FeaturedCategories from "../components/location/FeaturedCategories";
+import GoogleMap from "../components/GoogleMap";
+import Main from "../components/Main";
+import Hero from "../components/location/Hero";
 
-/**
- * Required when Knowledge Graph Stream is used for a template.
- */
 export const config: TemplateConfig = {
   stream: {
-    $id: "my-stream-id",
-    // Specifies the exact data that each generated document will contain. This data is passed in
-    // directly as props to the default exported function.
-    fields: ["id", "name", "slug"],
-    // Defines the scope of entities that qualify for this stream.
+    $id: "location",
+    fields: [
+      "id",
+      "name",
+      "address",
+      "mainPhone",
+      "hours",
+      "slug",
+      "description",
+      "neighborhood",
+      "photoGallery",
+      "services",
+      "paymentOptions",
+      "yextDisplayCoordinate",
+      "c_relatedCategories.name",
+      "c_relatedCategories.description",
+      "c_relatedCategories.slug",
+      "c_relatedCategories.primaryPhoto",
+      "c_relatedCategories.products",
+      "c_relatedCategories.services",
+      "c_relatedCategories.c_promotionTitle",
+    ],
     filter: {
       entityTypes: ["location"],
     },
-    // The entity language profiles that documents will be generated for.
     localization: {
       locales: ["en"],
     },
   },
 };
 
-/**
- * Defines the path that the generated file will live at for production.
- */
+
 export const getPath: GetPath<TemplateProps> = ({ document }) => {
   return document.slug ?? document.name;
 };
 
-/**
- * Defines a list of paths which will redirect to the path created by getPath.
- */
-export const getRedirects: GetRedirects<TemplateProps> = ({ document }) => {
-  return [`index-old/${document.id.toString()}`];
+export const transformProps: TransformProps<TemplateRenderProps> = async (
+  data
+) => {
+  // const locationAddress = data.document.address;
+  // const neighborhood = data.document.neighborhood;
+  // const description = data.document.c_relatedCategories[0].description;
+  // const transformedDescription = description.replace(
+  //     /\{\{([^}]+)\}\}/g,
+  //     (match, key:string) => {
+  //       switch (key.trim()) {
+  //         case 'address.line1':
+  //           return locationAddress.line1;
+  //         case 'address.line2':
+  //           return locationAddress.line2;
+  //         case 'address.city':
+  //           return locationAddress.city;
+  //         case 'address.region':
+  //           return locationAddress.region;
+  //         case 'neighborhood':
+  //           return neighborhood;
+  //         default:
+  //             return match;
+  //       }
+  //     }
+  //   );
+
+  return {
+      ...data,
+      document: {
+          ...data.document,
+          // transformedDescription: transformedDescription
+      }
+  }
 };
 
-/**
- * This allows the user to define a function which will take in their template
- * data and produce a HeadConfig object. When the site is generated, the HeadConfig
- * will be used to generate the inner contents of the HTML document's <head> tag.
- * This can include the title, meta tags, script tags, etc.
- */
+
+
 export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   relativePrefixToRoot,
   path,
@@ -70,23 +109,27 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   };
 };
 
-/**
- * This is the main template. It can have any name as long as it's the default export.
- * The props passed in here are the direct stream document defined by `config`.
- */
-const EntityPage: Template<TemplateRenderProps> = ({
-  relativePrefixToRoot,
-  path,
-  document,
-}) => {
-  const { name } = document;
 
+const LocationPage: Template<TemplateRenderProps> = (data) => {
   return (
     <>
-      <h1>Entity Powered Page</h1>
-      <div>Entity Name: {name}</div>
+      <Main data={data}>
+        <DocumentProvider value={data.document}>
+          <main className="min-h-screen pb-32">
+            <div className="centered-container">
+              <BreadCrumbs />
+              <Hero />
+            </div>
+            <FeaturedCategories />
+            <div className="centered-container">
+              <FAQs />
+              {/* <GoogleMap /> */}
+            </div>
+          </main>
+        </DocumentProvider>
+      </Main>
     </>
   );
 };
 
-export default EntityPage;
+export default LocationPage;
