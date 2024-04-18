@@ -124,7 +124,7 @@ export default async function entity(
   }
 
   const unlinkEntityPromises = entityIdsToUnlink.map((entityId) =>
-    updateEntity(entityId, body)
+    updateEntity(entityId, unlinkBody)
   );
 
   const unlinkedEntityResults = await Promise.allSettled(unlinkEntityPromises);
