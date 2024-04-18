@@ -27,6 +27,32 @@ export const createEntity = async <T>(
   }
 };
 
+export const updateEntity = async (
+  entityId: string,
+  body: any
+): Promise<string | undefined> => {
+  const mgmtApiResp = await fetch(
+    `https://api.yextapis.com/v2/accounts/me/entity/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }
+  );
+
+  const resp = await mgmtApiResp.json();
+
+  if (mgmtApiResp.status !== 200) {
+    console.error("Error updating entity:", resp);
+    return;
+  } else {
+    return entityId;
+  }
+};
+
+
 export const deleteEntity = async (
   entityId: string
 ): Promise<string | undefined> => {
