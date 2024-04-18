@@ -8,6 +8,7 @@ import {
 } from "../../../types/yext";
 import {
   createEntity,
+  updateEntity,
   deleteEntity,
   fetchEntities,
   fetchEntity,
@@ -112,25 +113,29 @@ export default async function entity(
   });
 
   // Remove Category Pages that are no longer linked to the location
-  const entityIdsToDelete = await getEntitiesThatShouldBeDeleted(
+  const entityIdsToUnlink = await getEntitiesThatShouldBeUnlinked(
     locationEntityId,
     categoryPageEntityIds
   );
-  console.log("Entities to delete:", entityIdsToDelete);
+  console.log("Entities to unlink:", entityIdsToUnlink);
 
-  const deleteEntityPromises = entityIdsToDelete.map((entityId) =>
-    deleteEntity(entityId)
+  const unlinkBody = {
+    "c_relatedLocations": []
+  }
+
+  const unlinkEntityPromises = entityIdsToUnlink.map((entityId) =>
+    updateEntity(entityId, body)
   );
 
-  const deleteEntityResults = await Promise.allSettled(deleteEntityPromises);
+  const unlinkedEntityResults = await Promise.allSettled(unlinkEntityPromises);
 
-  const deletedEntities: string[] = [];
-  deleteEntityResults.forEach((result) => {
+  const unlinkedEntities: string[] = [];
+  unlinkedEntityResults.forEach((result) => {
     if (result.status === "fulfilled") {
       const value = result.value;
       if (value) {
         console.log("Entity deleted:", value);
-        deletedEntities.push(value);
+        unlinkedEntities.push(value);
       }
     } else {
       console.log("Error deleting entity:", result.reason);
@@ -141,7 +146,7 @@ export default async function entity(
     body: JSON.stringify({
       message: "Request processed successfully",
       createdEntities,
-      deletedEntities,
+      unlinkedEntities,
     }),
     headers: {},
     statusCode: 200,
@@ -165,7 +170,7 @@ const checkIfEntityExists = async (
   };
 };
 
-const getEntitiesThatShouldBeDeleted = async (
+const getEntitiesThatShouldBeUnlinked = async (
   locationEntityId: string,
   categoryPageIds: string[]
 ): Promise<string[]> => {
@@ -197,7 +202,7 @@ const constructCategoryPageEntity = async (
     meta: {
       id,
     },
-    name: entityResponse?.response.name ?? "Category Page",
+    name: entityResponse?.response.name ?? `${locationEntityId}-${categoryId} Category Page`,
     slug,
     c_relatedCategories: [categoryId],
     c_relatedLocations: [locationEntityId],
