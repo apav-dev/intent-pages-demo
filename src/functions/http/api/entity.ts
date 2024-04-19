@@ -60,28 +60,57 @@ export default async function entity(
 
   const createCategoryPageRequests: CreateCategoryPageRequest[] = [];
 
+  // await Promise.allSettled(
+  //   checkIfEntityExistsResults.map(async (result) => {
+  //     if (result.status === "fulfilled") {
+  //       const value = result.value as {
+  //         entityExists: boolean;
+  //         entityId: string;
+  //       };
+
+  //       if (!value.entityExists) {
+  //         console.log(
+  //           "Entity doesn't exist:",
+  //           value.entityId,
+  //           value.entityExists
+  //         );
+
+  //         const requestBody = await constructCategoryPageEntity(
+  //           locationEntityId,
+  //           value.entityId,
+  //           locationProfile
+  //         );
+  //         console.log("Request body:", requestBody);
+  //         createCategoryPageRequests.push(requestBody);
+  //       }
+  //     } else {
+  //       // Log or handle the error.
+  //       console.log("Error accessing entity:", result.reason);
+  //     }
+  //   })
+  // );
+
   await Promise.allSettled(
     checkIfEntityExistsResults.map(async (result) => {
       if (result.status === "fulfilled") {
-        const value = result.value as {
-          entityExists: boolean;
-          entityId: string;
-        };
+        const { entityExists, entityId, entity } = result.value;
 
-        if (!value.entityExists) {
-          console.log(
-            "Entity doesn't exist:",
-            value.entityId,
-            value.entityExists
-          );
-
+        if (!entityExists) {
+          console.log("Entity doesn't exist:", entityId, entityExists);
           const requestBody = await constructCategoryPageEntity(
             locationEntityId,
-            value.entityId,
+            entityId,
             locationProfile
           );
           console.log("Request body:", requestBody);
           createCategoryPageRequests.push(requestBody);
+        } else {
+          // Check if locationEntityId is already in c_relatedLocations
+          if (entity && !entity.c_relatedLocations.includes(locationEntityId)) {
+            console.log("Adding locationEntityId to c_relatedLocations:", entityId);
+            entity.c_relatedLocations.push(locationEntityId);
+            await updateEntity(entityId, { "c_relatedLocations": entity.c_relatedLocations });
+          }
         }
       } else {
         // Log or handle the error.
@@ -124,7 +153,7 @@ export default async function entity(
   }
 
   const unlinkEntityPromises = entityIdsToUnlink.map((entityId) =>
-    updateEntity(entityId, JSON.stringify(unlinkBody))
+    updateEntity(entityId, unlinkBody)
   );
 
   const unlinkedEntityResults = await Promise.allSettled(unlinkEntityPromises);
@@ -134,11 +163,11 @@ export default async function entity(
     if (result.status === "fulfilled") {
       const value = result.value;
       if (value) {
-        console.log("Entity deleted:", value);
+        console.log("Entity unlinked:", value);
         unlinkedEntities.push(value);
       }
     } else {
-      console.log("Error deleting entity:", result.reason);
+      console.log("Error unlinking entity:", result.reason);
     }
   });
 
@@ -153,22 +182,37 @@ export default async function entity(
   };
 }
 
+// const checkIfEntityExists = async (
+//   entityId: string
+// ): Promise<{ entityExists: boolean; entityId: string }> => {
+//   const response = await fetchEntity(entityId);
+
+//   const entityExists = !!response;
+//   console.log(
+//     entityExists ? "Entity exists: " : "Entity doesn't exist: ",
+//     entityId
+//   );
+
+//   return {
+//     entityExists,
+//     entityId,
+//   };
+// };
+
 const checkIfEntityExists = async (
   entityId: string
-): Promise<{ entityExists: boolean; entityId: string }> => {
+): Promise<{ entityExists: boolean; entityId: string; entity?: any }> => {
   const response = await fetchEntity(entityId);
-
   const entityExists = !!response;
-  console.log(
-    entityExists ? "Entity exists: " : "Entity doesn't exist: ",
-    entityId
-  );
 
+  console.log(entityExists ? "Entity exists: " : "Entity doesn't exist: ", entityId);
   return {
     entityExists,
     entityId,
+    entity: response,
   };
 };
+
 
 const getEntitiesThatShouldBeUnlinked = async (
   locationEntityId: string,
@@ -202,7 +246,7 @@ const constructCategoryPageEntity = async (
     meta: {
       id,
     },
-    name: entityResponse?.response.name ?? `${locationEntityId}-${categoryId} Category Page`,
+    name: `${locationEntityId}-${categoryId} Category Page`,
     slug,
     c_relatedCategories: [categoryId],
     c_relatedLocations: [locationEntityId],

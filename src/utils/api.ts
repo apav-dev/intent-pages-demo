@@ -32,7 +32,7 @@ export const updateEntity = async (
   body: any
 ): Promise<string | undefined> => {
   const mgmtApiResp = await fetch(
-    `https://api.yextapis.com/v2/accounts/me/entity/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`,
+    `https://api.yextapis.com/v2/accounts/me/entities/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`,
     {
       method: "PUT",
       headers: {
