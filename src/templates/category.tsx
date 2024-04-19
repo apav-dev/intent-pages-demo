@@ -45,7 +45,7 @@ import {
         "c_relatedCategories.c_featuredProducts.primaryPhoto",
       ],
       filter: {
-        entityTypes: ["ce_categoryPage"],
+        savedFilterIds: ["1383283189"],
       },
       localization: {
         locales: ["en"],
