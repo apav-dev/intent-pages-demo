@@ -8,6 +8,7 @@ declare global {
   const YEXT_PUBLIC_SEARCH_EXPERIENCE_API_KEY: string;
   const YEXT_PUBLIC_NEARBY_SECTION_API_KEY: string;
   const YEXT_PUBLIC_REVIEWS_API_KEY: string;
+  const YEXT_PUBLIC_SEARCH_API_KEY: string;
 }
 
 const config: ConfigurationProviderContextType = {
@@ -28,20 +29,3 @@ export const MAPS_API_KEY = YEXT_PUBLIC_MAPS_API_KEY || "<REPLACE-ME>";
 // export const LOCATOR_ENTITY_TYPE = "location";
 // // Radius used for the locator geolocate button.
 // export const GEOLOCATE_RADIUS = 50;
-
-// export const getSearchProvider = (
-//   apiKey: string,
-//   locale: string,
-//   domain: string
-// ) => {
-//   const experienceVersion = isProduction(domain) ? "PRODUCTION" : "STAGING";
-
-//   return provideHeadless({
-//     apiKey,
-//     experienceKey: "locator",
-//     locale,
-//     verticalKey: "locations",
-//     experienceVersion,
-//     // endpoints: SandboxEndpoints // Add if using a sandbox account
-//   });
-// };

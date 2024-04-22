@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Dialog } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useState } from "react";
+import { Dialog } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { formatPhoneNumber } from "react-phone-number-input";
 import { Image } from "@yext/pages-components";
 import { Link } from "@yext/pages-components";
@@ -18,7 +18,6 @@ let navigation = [
 ];
 
 const Header = ({ data }: HeaderProps) => {
-
   let phone = "+12345678910";
   let email = "support@yext.com";
 
@@ -26,11 +25,18 @@ const Header = ({ data }: HeaderProps) => {
 
   return (
     <header className="border-b shadow-sm">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav
+        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        aria-label="Global"
+      >
         <div className="flex items-center gap-x-12">
           <a href="/index.html" className="-m-1.5 p-1.5">
             <span className="sr-only">Yext Electronics</span>
-            <img className="h-24 w-auto rounded-full" src="/yext-logo.png" alt="" />
+            <img
+              className="h-24 w-auto rounded-full"
+              src="/yext-logo.png"
+              alt=""
+            />
           </a>
           <div className="hidden lg:flex lg:gap-x-12">
             {/* {navigation.map((item) => (
@@ -45,19 +51,14 @@ const Header = ({ data }: HeaderProps) => {
             ))} */}
           </div>
         </div>
-        <div className="flex justify-around space-x-8 p-2 border border-gray-300 rounded-md shadow-sm">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={"Search Yext Electronics"}
-            className="text-gray-400"
-          />
-            <Search  />
-        </div>
+        {/* <div className="flex justify-around space-x-8 p-2 border border-gray-300 rounded-md shadow-sm"> */}
+        <Link className="hover:underline hover:text-blue-500" href="/stores">
+          Find a Store
+        </Link>
+        {/* </div> */}
       </nav>
     </header>
-  )  
-
+  );
 };
 
 export default Header;

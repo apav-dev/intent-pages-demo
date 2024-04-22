@@ -1,41 +1,52 @@
 import type { ReactNode } from "react";
 import Header from "./Header";
 // import Footer from "./Footer";
-import { AnalyticsProvider, AnalyticsScopeProvider } from "@yext/pages-components";
+import { AnalyticsProvider } from "@yext/pages-components";
 import { TemplateDataProvider } from "../common/useTemplateData";
 import type { TemplateRenderProps, BaseProfile } from "../types/entities";
-import { TemplateProps } from "@yext/pages";
-import { useDocument } from "../hooks/useDocument";
 import config from "../config";
 import { ConfigurationProvider } from "@yext/sites-react-components";
+import { cn } from "../lib/utils";
+import {
+  provideHeadless,
+  Environment,
+  SearchHeadlessProvider,
+} from "@yext/search-headless-react";
 
 interface MainProps {
   data: TemplateRenderProps<BaseProfile>;
   children?: ReactNode;
+  containerClassName?: string;
 }
+
+const searcher = provideHeadless({
+  apiKey: YEXT_PUBLIC_SEARCH_API_KEY,
+  experienceKey: "marketing-site",
+  locale: "en",
+  environment: Environment.PROD,
+  verticalKey: "locations",
+});
 
 const Main = (props: MainProps) => {
   return (
     <ConfigurationProvider value={config}>
       <AnalyticsProvider templateData={props.data} requireOptIn={false}>
-        <MainInternal {...props} />
+        <SearchHeadlessProvider searcher={searcher}>
+          <MainInternal {...props} />
+        </SearchHeadlessProvider>
       </AnalyticsProvider>
     </ConfigurationProvider>
   );
 };
 
-const MainInternal = (props: MainProps) => {
-  const { children } = props;
-
-  // Create the global window.enableYextAnalytics function for clients that need to get user consent
-  // If consent is not required, set requireOptIn on AnalyticsProvider above to false.
-  // useExposeEnableYAFunction();
-
+const MainInternal = ({ data, children, containerClassName }: MainProps) => {
   return (
-    <TemplateDataProvider value={props.data}>
+    <TemplateDataProvider value={data}>
       <Header />
-      {children}
-      {/* <Footer /> */}
+      <main className={cn("min-h-screen", containerClassName)}>
+        {children}
+        {/* <Footer /> */}
+      </main>
     </TemplateDataProvider>
   );
 };

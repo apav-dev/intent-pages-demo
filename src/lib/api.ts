@@ -52,7 +52,6 @@ export const updateEntity = async (
   }
 };
 
-
 export const deleteEntity = async (
   entityId: string
 ): Promise<string | undefined> => {
@@ -80,6 +79,7 @@ export const fetchEntity = async <T>(
   entityId: string
 ): Promise<YextResponse<T> | undefined> => {
   const url = `https://api.yextapis.com/v2/accounts/me/entities/${entityId}?api_key=${YEXT_MGMT_API_KEY}&v=20230901`;
+  console.log("Fetching entity:", url);
   const apiResponse = await fetch(url);
 
   if (apiResponse.status === 404) {
