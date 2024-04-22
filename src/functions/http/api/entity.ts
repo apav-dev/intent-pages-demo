@@ -57,7 +57,6 @@ export default async function entity(
   );
 
   const checkIfEntityExistsResults = await Promise.allSettled(entityPromises);
-
   const createCategoryPageRequests: CreateCategoryPageRequest[] = [];
 
   // await Promise.allSettled(
@@ -90,10 +89,11 @@ export default async function entity(
   //   })
   // );
 
+  // TODO: clean up typescript
   await Promise.allSettled(
     checkIfEntityExistsResults.map(async (result) => {
       if (result.status === "fulfilled") {
-        const { entityExists, entityId, entity } = result.value;
+        let { entityExists, entityId, entity } = result.value;
 
         if (!entityExists) {
           console.log("Entity doesn't exist:", entityId, entityExists);
@@ -106,10 +106,21 @@ export default async function entity(
           createCategoryPageRequests.push(requestBody);
         } else {
           // Check if locationEntityId is already in c_relatedLocations
-          if (entity && !entity.c_relatedLocations.includes(locationEntityId)) {
-            console.log("Adding locationEntityId to c_relatedLocations:", entityId);
-            entity.c_relatedLocations.push(locationEntityId);
-            await updateEntity(entityId, { "c_relatedLocations": entity.c_relatedLocations });
+          if (
+            entity &&
+            (!entity.c_relatedLocations ||
+              !entity.c_relatedLocations.includes(locationEntityId))
+          ) {
+            entity = {
+              ...entity,
+              c_relatedLocations: [
+                ...(entity.c_relatedLocations ?? []),
+                locationEntityId,
+              ],
+            };
+            await updateEntity(entityId, {
+              c_relatedLocations: entity.c_relatedLocations,
+            });
           }
         }
       } else {
@@ -149,8 +160,8 @@ export default async function entity(
   console.log("Entities to unlink:", entityIdsToUnlink);
 
   const unlinkBody = {
-    "c_relatedLocations": []
-  }
+    c_relatedLocations: [],
+  };
 
   const unlinkEntityPromises = entityIdsToUnlink.map((entityId) =>
     updateEntity(entityId, unlinkBody)
@@ -182,37 +193,22 @@ export default async function entity(
   };
 }
 
-// const checkIfEntityExists = async (
-//   entityId: string
-// ): Promise<{ entityExists: boolean; entityId: string }> => {
-//   const response = await fetchEntity(entityId);
-
-//   const entityExists = !!response;
-//   console.log(
-//     entityExists ? "Entity exists: " : "Entity doesn't exist: ",
-//     entityId
-//   );
-
-//   return {
-//     entityExists,
-//     entityId,
-//   };
-// };
-
 const checkIfEntityExists = async (
   entityId: string
 ): Promise<{ entityExists: boolean; entityId: string; entity?: any }> => {
   const response = await fetchEntity(entityId);
   const entityExists = !!response;
 
-  console.log(entityExists ? "Entity exists: " : "Entity doesn't exist: ", entityId);
+  console.log(
+    entityExists ? "Entity exists: " : "Entity doesn't exist: ",
+    entityId
+  );
   return {
     entityExists,
     entityId,
     entity: response,
   };
 };
-
 
 const getEntitiesThatShouldBeUnlinked = async (
   locationEntityId: string,
