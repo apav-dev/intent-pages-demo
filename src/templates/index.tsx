@@ -40,18 +40,15 @@ export const config: TemplateConfig = {
   },
 };
 
-
 export const transformProps: TransformProps<TemplateRenderProps> = async (
   data
 ) => {
-  return data
+  return data;
 };
-
 
 export const getPath: GetPath<TemplateRenderProps> = () => {
   return `index.html`;
 };
-
 
 export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   relativePrefixToRoot,
@@ -69,22 +66,18 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
           name: "description",
           content: "Static page example meta description.",
         },
-      }
+      },
     ],
   };
 };
-
-
 
 const Index: Template<TemplateRenderProps> = (data) => {
   return (
     <>
       <Main data={data}>
         <DocumentProvider value={data.document}>
-          <main>
-            <Banner />
-            <DirectoryGrid />
-          </main>
+          <Banner />
+          <DirectoryGrid />
         </DocumentProvider>
       </Main>
     </>

@@ -7,9 +7,8 @@ import {
   TemplateConfig,
   TemplateProps,
   TemplateRenderProps,
-  TransformProps
+  TransformProps,
 } from "@yext/pages";
-import * as React from "react";
 import "../index.css";
 import { DocumentProvider } from "../hooks/useDocument";
 import Banner from "../components/Banner";
@@ -55,7 +54,6 @@ export const config: TemplateConfig = {
   },
 };
 
-
 export const getPath: GetPath<TemplateProps> = ({ document }) => {
   return document.slug ?? document.name;
 };
@@ -87,15 +85,13 @@ export const transformProps: TransformProps<TemplateRenderProps> = async (
   //   );
 
   return {
-      ...data,
-      document: {
-          ...data.document,
-          // transformedDescription: transformedDescription
-      }
-  }
+    ...data,
+    document: {
+      ...data.document,
+      // transformedDescription: transformedDescription
+    },
+  };
 };
-
-
 
 export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   relativePrefixToRoot,
@@ -109,23 +105,20 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   };
 };
 
-
 const LocationPage: Template<TemplateRenderProps> = (data) => {
   return (
     <>
-      <Main data={data}>
+      <Main data={data} containerClassName="pb-32">
         <DocumentProvider value={data.document}>
-          <main className="min-h-screen pb-32">
-            <div className="centered-container">
-              <BreadCrumbs />
-              <Hero />
-            </div>
-            <FeaturedCategories />
-            <div className="centered-container">
-              <FAQs />
-              {/* <GoogleMap /> */}
-            </div>
-          </main>
+          <div className="centered-container">
+            <BreadCrumbs />
+            <Hero />
+          </div>
+          <FeaturedCategories />
+          <div className="centered-container">
+            <FAQs />
+            {/* <GoogleMap /> */}
+          </div>
         </DocumentProvider>
       </Main>
     </>

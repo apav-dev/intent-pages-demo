@@ -1,7 +1,6 @@
 import {
   GetHeadConfig,
   GetPath,
-  GetRedirects,
   HeadConfig,
   Template,
   TemplateConfig,
@@ -59,21 +58,21 @@ export const getPath: GetPath<TemplateProps> = ({ document }) => {
 export const transformProps: TransformProps<TemplateRenderProps> = async (
   data
 ) => {
-  const locationAddress = data.document.c_relatedLocations[0].address;
-  const neighborhood = data.document.c_relatedLocations[0].neighborhood;
-  const description = data.document.c_relatedCategories[0].description;
+  const location = data.document.c_relatedLocations[0];
+  const { address, neighborhood, description } = location;
+
   const transformedDescription = description.replace(
     /\{\{([^}]+)\}\}/g,
-    (match, key: string) => {
+    (match: string, key: string) => {
       switch (key.trim()) {
         case "address.line1":
-          return locationAddress.line1;
+          return address.line1;
         case "address.line2":
-          return locationAddress.line2;
+          return address.line2;
         case "address.city":
-          return locationAddress.city;
+          return address.city;
         case "address.region":
-          return locationAddress.region;
+          return address.region;
         case "neighborhood":
           return neighborhood;
         default:
@@ -108,14 +107,12 @@ const LocationPage: Template<TemplateRenderProps> = (data) => {
     <>
       <Main data={data}>
         <DocumentProvider value={data.document}>
-          <main className="min-h-screen">
-            {/* <Banner /> */}
-            <div className="centered-container">
-              <BreadCrumbs />
-              <Hero />
-              <ProductsAndServices />
-            </div>
-          </main>
+          {/* <Banner /> */}
+          <div className="centered-container">
+            <BreadCrumbs />
+            <Hero />
+            <ProductsAndServices />
+          </div>
         </DocumentProvider>
       </Main>
     </>

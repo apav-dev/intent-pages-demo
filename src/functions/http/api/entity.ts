@@ -12,7 +12,7 @@ import {
   deleteEntity,
   fetchEntities,
   fetchEntity,
-} from "../../../utils/api";
+} from "../../../lib/api";
 
 export default async function entity(
   request: PagesHttpRequest
