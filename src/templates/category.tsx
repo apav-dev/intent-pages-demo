@@ -1,6 +1,7 @@
 import {
   GetHeadConfig,
   GetPath,
+  GetRedirects,
   HeadConfig,
   Template,
   TemplateConfig,
@@ -8,6 +9,7 @@ import {
   TemplateRenderProps,
   TransformProps,
 } from "@yext/pages";
+import * as React from "react";
 import "../index.css";
 import { DocumentProvider } from "../hooks/useDocument";
 
@@ -58,28 +60,27 @@ export const getPath: GetPath<TemplateProps> = ({ document }) => {
 export const transformProps: TransformProps<TemplateRenderProps> = async (
   data
 ) => {
-  const location = data.document.c_relatedLocations[0];
-  const { address, neighborhood, description } = location;
-
-  const transformedDescription = description.replace(
-    /\{\{([^}]+)\}\}/g,
-    (match: string, key: string) => {
-      switch (key.trim()) {
-        case "address.line1":
-          return address.line1;
-        case "address.line2":
-          return address.line2;
-        case "address.city":
-          return address.city;
-        case "address.region":
-          return address.region;
-        case "neighborhood":
-          return neighborhood;
-        default:
-          return match;
-      }
-    }
-  );
+  const locationAddress = data.document.c_relatedLocations[0].address;
+  const neighborhood = data.document.c_relatedLocations[0].neighborhood;
+  const description = data.document.c_relatedCategories[0].description;
+  const transformedDescription = description
+    ? description.replace(/\{\{([^}]+)\}\}/g, (match, key: string) => {
+        switch (key.trim()) {
+          case "address.line1":
+            return locationAddress.line1;
+          case "address.line2":
+            return locationAddress.line2;
+          case "address.city":
+            return locationAddress.city;
+          case "address.region":
+            return locationAddress.region;
+          case "neighborhood":
+            return neighborhood;
+          default:
+            return match;
+        }
+      })
+    : "";
 
   return {
     ...data,
@@ -107,12 +108,14 @@ const LocationPage: Template<TemplateRenderProps> = (data) => {
     <>
       <Main data={data}>
         <DocumentProvider value={data.document}>
-          {/* <Banner /> */}
-          <div className="centered-container">
-            <BreadCrumbs />
-            <Hero />
-            <ProductsAndServices />
-          </div>
+          <main className="min-h-screen">
+            {/* <Banner /> */}
+            <div className="centered-container">
+              <BreadCrumbs />
+              <Hero />
+              <ProductsAndServices />
+            </div>
+          </main>
         </DocumentProvider>
       </Main>
     </>
