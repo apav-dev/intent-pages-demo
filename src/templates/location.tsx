@@ -46,7 +46,7 @@ export const config: TemplateConfig = {
       "c_relatedCategoryPages.c_relatedCategories.c_promotionTitle",
     ],
     filter: {
-      entityTypes: ["location"],
+      savedFilterIds: ["1371858905"],
     },
     localization: {
       locales: ["en"],
